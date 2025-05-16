@@ -1,0 +1,84 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ESL Pronunciation Practice</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 2em;
+      background: #f0f8ff;
+    }
+    h1 {
+      color: #333;
+    }
+    select, button {
+      font-size: 1.2em;
+      padding: 0.5em;
+      margin: 1em;
+    }
+    #result {
+      font-size: 1.4em;
+      margin-top: 1em;
+    }
+    .note {
+      color: #666;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎤 Pronunciation Practice</h1>
+  <p>Select a word and say it clearly when prompted.</p>
+
+  <label for="word">Choose a word:</label>
+  <select id="word">
+    <option value="beach">beach</option>
+    <option value="rainforest">rainforest</option>
+    <option value="vibrant">vibrant</option>
+    <option value="iconic">iconic</option>
+    <option value="amazing">amazing</option>
+    <option value="peaceful">peaceful</option>
+    <option value="unforgettable">unforgettable</option>
+  </select>
+
+  <br>
+  <button onclick="startRecognition()">🎙️ Speak</button>
+
+  <p id="result">Waiting for input...</p>
+  <p class="note">Works best in Google Chrome or Microsoft Edge on desktop.</p>
+
+  <script>
+    const supported = 'SpeechRecognition' in window || 'webkitSpeechRecognition' in window;
+    if (!supported) {
+      document.body.innerHTML = "<h2>⚠️ Your browser doesn't support speech recognition.<br>Please use Chrome or Edge.</h2>";
+    }
+
+    function startRecognition() {
+      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      const selectedWord = document.getElementById("word").value.toLowerCase();
+
+      recognition.lang = 'en-US';
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      recognition.start();
+
+      recognition.onresult = function(event) {
+        const spoken = event.results[0][0].transcript.toLowerCase();
+        const feedback = spoken.includes(selectedWord)
+          ? `✅ Great job! You said: "${spoken}"`
+          : `❌ Try again. You said: "${spoken}". Expected: "${selectedWord}"`;
+        document.getElementById("result").innerText = feedback;
+      };
+
+      recognition.onerror = function(event) {
+        document.getElementById("result").innerText = "❌ Error: " + event.error;
+      };
+    }
+  </script>
+</body>
+</html>
